@@ -3,6 +3,8 @@
            (java.net ServerSocket InetAddress))
    (:require [clojure.java.io :as io]))
 
+(def talk2me-data "talk2me.data")
+
 (defn talk2me-server []
   (let [server (new ServerSocket 9999)
        localhost (InetAddress/getLocalHost)]
@@ -14,7 +16,7 @@
               response (new PrintWriter output-stream)]
           (println (str "[INFO] connection established from " (.getInetAddress connection) ":" (.getPort connection)))
           
-          (with-open [data-stream (io/reader "talk2me.data")]
+          (with-open [data-stream (io/reader talk2me-data)]
             (doseq [line (line-seq data-stream)]
             (.println response line )))
 

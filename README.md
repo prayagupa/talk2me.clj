@@ -10,4 +10,9 @@ run server
 lein run
 ```
 
+test
+-----
 
+```bash
+curl -XGET localhost:9999
+```
