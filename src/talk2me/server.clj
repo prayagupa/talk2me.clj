@@ -1,17 +1,23 @@
 (ns talk2me.server
   (:import (java.io BufferedReader InputStreamReader OutputStreamWriter PrintWriter)
-           (java.net ServerSocket)))
+           (java.net ServerSocket InetAddress))
+   (:require [clojure.java.io :as io]))
 
 (defn talk2me-server []
-  (let [server (new ServerSocket 9999)]
-    (println "Server started at :9999")
+  (let [server (new ServerSocket 9999)
+       localhost (InetAddress/getLocalHost)]
+    (println (str "[INFO] Server started at " (.getHostAddress localhost) ":9999"))
     (while true
       (do
         (let [connection (.accept server)
               output-stream (.getOutputStream connection)
               response (new PrintWriter output-stream)]
           (println (str "[INFO] connection established from " (.getInetAddress connection) ":" (.getPort connection)))
-          (.println response "hello-clj")
+          
+          (with-open [data-stream (io/reader "talk2me.data")]
+            (doseq [line (line-seq data-stream)]
+            (.println response line )))
+
           (.flush response)
           (.close connection))))))
 
